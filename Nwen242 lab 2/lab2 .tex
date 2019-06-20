@@ -1,0 +1,105 @@
+\documentclass[]{article}
+\usepackage{amsmath}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{graphics}
+\usepackage{amssymb}% http://ctan.org/pkg/amssymb
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\graphicspath{ {images/} }
+%opening
+\title{NWEN 242 LAB2}
+\author{Vincent Yu||ID:300390526}
+
+\begin{document}
+
+\maketitle
+
+\section*{4.1}
+\subsection*{source code}
+start:\newline
+addi \$5, \$5, 5\newline
+addi \$1, \$1, 1\newline
+addi \$3, \$3, 3 \newline
+nop\newline
+nop\newline
+add \$2, \$5, \$1  \newline
+add \$4, \$2, \$3 \newline
+nop \newline 
+nop \newline
+nop \newline
+END \newline 
+\subsection*{a}
+
+I count the number of cycles from the beginning of the code.
+For each mode we all have to use 10 cycles. 
+\subsection*{b}
+For basic mode, after 8 cycles the value of \$2 is needed in the second instruction.\newline
+For insert bubbles mode,after 10 cycles the value of \$2 is needed in the second instruction.\newline
+Note: The next instruction has a stalled at decoded for two bubbles.\newline
+For forwarding mode, after 8 cycles the value of \$2 is needed in the second instruction.\newline
+Here I used the same source code for these three modes. But for forwarding mode if I reduce the nops between the last addi and the first add, it can reduce cycles to 8. But in order to have correct value, we can't reduce the nops for basic mode. For insert bubbles mode it will be the same cycles as before.\newline 
+
+\subsection*{c}
+The hazard is date hazards. \newline
+The value of destination register in the first line is needed as a source register in the second instruction. So if we use the basic mode it hasn't been updated but it has already been used in the next instruction.
+
+\section*{4.2}
+\subsection*{a}
+For basic mode, it takes 5 cycles.
+For insert Bubbles mode, it takes 5 cycles.
+For forwarding mode, it only takes 4 cycles.
+\subsection*{b}
+For insert bubbles mode it will be an infinite loop as expected. But for forwarding and basic mode it will reach the end. And the value store in \$2 will be 2.
+\subsection*{c}
+This is a control hazard.
+For Basic and Forwarding mode the next addi instruction is being decoded while the beq is calculating. So it will keep on finishing the whole add instruction when the branch is taken. It will change the value stored in \$2 from zero to 1. So the next time meet the beq instruction the prediction will be not taken. Then it will keep on finishing the following instructions. But for insert bubbles mode, it will be an infinite loop as expected, because it automatically inserts bubbles between beq and add instructions.So the addi instruction  won't reach decode stage.
+\subsection*{d}
+We can simply use branch assumption which will flash the following instruction.  Another way is inserting a nops between beq instruction and add instruction.\newline
+\section*{4.3}
+\subsection*{a}
+For insert bubbles mode, after 12 cycles \$3 will receive the correct value.\newline
+For basic mode, after 13 cycles \$3 will receive the correct value.\newline
+Note: I insert three nops between addi and sw. \newline 
+For forwarding mode, after 10 cycle \$3 will receive the correct value.\newline
+\subsection*{b}
+For basic mode,after 14 cycles \$3 will be needed for next instructions\newline
+For forwarding mode, after 10 cycles \$3 will be needed for next instruction.\newline
+For insert bubble mode,after 10 cycles \$3 will be needed for next instruction.\newline
+\subsection*{c}
+The problem here is we have two hazard. The first one is between addi and sw instructions. The destination register of addi instruction is needed as source register for sw instruction. The value stored in \$2 is requested before the new value write back. The same problem happens between lw and addi instructions. The value of \$3 haven't been updated when the next instruction need it as a source register.
+This is a Data Hazard. 
+\subsection*{d}
+For forwarding mode we can just insert one nop between lw and addi instructions.\newline
+For basic mode we can insert three nops between addi and sw. And insert three nops between lw and addi to make the \$4 can receive the correct result.\newline
+For insert bubble mode we can just use the original code without any change.\newline
+\section*{5.1}
+\begin{center}
+	\begin{tabular}{ c c c c }
+		Mode Option & Instructions & Cycles & CPI \\
+		Basic & 205 & 211 & 1.029268264 \\
+		Bubbles with Branch Assumption& 76 & 154 & 2.026316\\
+		Forwarding & 107 & 113 & 1.056074738\\
+		Forwarding with Branch Assumption & 97 &  109  & 1.123711347\\
+	\end{tabular}
+
+\end{center}
+\section*{5.2}
+\subsection*{a}
+From the table above we can find for bubbles with branch assumption mode have less instructions than Forwarding mode but have more Cycles. And the CPI of bubbles with branch assumption mode is much higher than Forwarding mode. It shows the performance is not determined by the numbers of instructions but Cycles. Also I think the number of cycles is the multiplication of numbers of Instructions and CPI.\newline
+So only the cycle time and cycles determined the performance here.\newline
+\subsection*{b}
+
+\section*{5.3}
+\begin{center}
+	\begin{tabular}{ c c c c }
+		Mode Option & Instructions & Cycles & CPI \\
+		Forwarding Optimized& 97 & 103 & 1.061856\\
+		Forwarding with Branch Assumption Optimized& 87 &  99  & 1.137931\\
+	\end{tabular}
+\end{center}
+
+
+\end{document}
